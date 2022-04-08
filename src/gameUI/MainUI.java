@@ -19,33 +19,35 @@ public class MainUI extends JFrame{
     Set<Coord> PotentialCoords;
     Board board;
     Player whitePlayer, blackPlayer;
-    boolean isWhitesTurn;
+    boolean isWhitesTurn, keepPlaying;
 
-    MainUI(Player whitePlayer, Player blackPlayer){
+    MainUI(Player whitePlayer, Player blackPlayer, Board board){
         super("Chess Bot");
         PotentialCoords = new HashSet<>();
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
-        isWhitesTurn = true;
-    }
-
-    MainUI() {
-        this((Player) null, (Player) null);
-    }
-
-    MainUI(Player player){
-        this((Player) null, player);
-    }
-
-    public void draw(Board board){
         this.board = board;
+        isWhitesTurn = true;
+        keepPlaying = true;
+        draw();
+    }
+
+    public MainUI(Board board) {
+        this((Player) null, (Player) null, board);
+    }
+
+    public MainUI(Player player, Board board){
+        this((Player) null, player, board);
+    }
+
+    public void draw(){
         ChessBoard = new JButton[64];
         for (int i = 0; i < ChessBoard.length; i++){
             ChessBoard[i] = new JButton();
             ChessBoard[i].setBackground(Color.GRAY);
             var x = i / 8;
             var y = i % 8;
-            ChessBoard[i].addActionListener(e -> movePieceUI(e, board, 7-y, x));
+            ChessBoard[i].addActionListener(e -> movePieceUI(board, 7-y, x));
             var piece = board.findPiece(new Coord(7-y, x));
             if (piece != null){
                 ChessBoard[i].setText(Character.toString(Board.representations.charAt(piece.type)));
@@ -62,6 +64,7 @@ public class MainUI extends JFrame{
         setSize(440,460);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        prepareNextMove();
     }
 
     public void redraw(){
@@ -91,7 +94,7 @@ public class MainUI extends JFrame{
         repaint();
     }
 
-    private void movePieceUI(ActionEvent e, Board board, int x, int y) {
+    private void movePieceUI(Board board, int x, int y) {
         System.out.println(PrevCoord);
         var correctColor = (isWhitesTurn) ? WHITE : BLACK;
         if (PrevCoord == null) {
@@ -129,10 +132,22 @@ public class MainUI extends JFrame{
             }
         }
         redraw();
+        prepareNextMove();
+    }
+
+    private void prepareNextMove() {
+        if (isWhitesTurn && whitePlayer != null) {
+            isWhitesTurn = false;
+            whitePlayer.makeMove(board);
+            redraw();
+        } else if (!isWhitesTurn && blackPlayer != null) {
+            isWhitesTurn = true;
+            blackPlayer.makeMove(board);
+            redraw();
+        }
     }
 
     public static void main(String[] args) {
-        var hi =  new MainUI();
-        hi.draw(new Board());
+        new MainUI(new Board());
     }
 }

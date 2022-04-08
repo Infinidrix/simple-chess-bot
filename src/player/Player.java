@@ -8,5 +8,5 @@ abstract public class Player {
         this.color = color;
     }
 
-    abstract void makeMove(Board board);
+    abstract public void makeMove(Board board);
 }

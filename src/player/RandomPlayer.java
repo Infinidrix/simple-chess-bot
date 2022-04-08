@@ -2,10 +2,12 @@ package player;
 
 import board.Board;
 import board.MoveHistory;
+import gameUI.MainUI;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+import static board.Board.BLACK;
 import static board.Board.WHITE;
 
 public class RandomPlayer extends Player{
@@ -14,7 +16,7 @@ public class RandomPlayer extends Player{
     }
 
     @Override
-    void makeMove(Board board) {
+    public void makeMove(Board board) {
         var pieces = board.BlackPieces;
         if (color == WHITE){
             pieces = board.WhitePieces;
@@ -30,5 +32,9 @@ public class RandomPlayer extends Player{
 
         var nextMove = possibleMoves.get(nextMoveInd);
         board.movePiece(nextMove.getPiece(), nextMove.getNewLoc());
+    }
+
+    public static void main(String[] args) {
+        new MainUI(new RandomPlayer(BLACK), new Board());
     }
 }
