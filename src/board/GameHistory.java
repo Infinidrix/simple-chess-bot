@@ -9,8 +9,8 @@ public class GameHistory {
         this.history = new Stack<>();
     }
 
-    public void add(ChessPiece piece, Coord oldLoc){
-        history.add(new MoveHistory(oldLoc, piece.coord, piece));
+    public void add(ChessPiece piece, Coord newCoord, ChessPiece eatenPiece){
+        history.add(new MoveHistory(piece.coord, newCoord, piece, eatenPiece));
     }
 
     @Override
@@ -24,6 +24,8 @@ public class GameHistory {
         if (history.size() == 0)
             return;
         MoveHistory lastMove = history.pop();
-        lastMove.piece.coord = lastMove.newLoc;
+        lastMove.piece.coord = lastMove.oldLoc;
+        if (lastMove.eatenPiece != null)
+            lastMove.eatenPiece.coord = lastMove.newLoc;
     }
 }

@@ -2,6 +2,7 @@ package gameUI;
 
 import board.Board;
 import board.Coord;
+import player.Player;
 
 import java.awt.event.*;
 import java.awt.*;
@@ -17,11 +18,25 @@ public class MainUI extends JFrame{
     Coord PrevCoord;
     Set<Coord> PotentialCoords;
     Board board;
+    Player whitePlayer, blackPlayer;
+    boolean isWhitesTurn;
 
-    MainUI(){
+    MainUI(Player whitePlayer, Player blackPlayer){
         super("Chess Bot");
         PotentialCoords = new HashSet<>();
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
+        isWhitesTurn = true;
     }
+
+    MainUI() {
+        this((Player) null, (Player) null);
+    }
+
+    MainUI(Player player){
+        this((Player) null, player);
+    }
+
     public void draw(Board board){
         this.board = board;
         ChessBoard = new JButton[64];
@@ -50,7 +65,6 @@ public class MainUI extends JFrame{
     }
 
     public void redraw(){
-        System.out.println("Prev Coord " + PrevCoord);
         for (int i = 0; i < ChessBoard.length; i++){
             ChessBoard[i].setBackground(Color.GRAY);
             var x = i / 8;
@@ -58,7 +72,6 @@ public class MainUI extends JFrame{
             var currCoord = new Coord(7-y, x);
             var piece = board.findPiece(currCoord);
             if (PrevCoord != null && PrevCoord.equals(currCoord)){
-                System.out.println("Got here");
                 ChessBoard[i].setBackground(Color.green);
             }
             if (PotentialCoords.contains(currCoord)){
@@ -80,30 +93,40 @@ public class MainUI extends JFrame{
 
     private void movePieceUI(ActionEvent e, Board board, int x, int y) {
         System.out.println(PrevCoord);
+        var correctColor = (isWhitesTurn) ? WHITE : BLACK;
         if (PrevCoord == null) {
             PrevCoord = new Coord(x, y);
             var piece = board.findPiece(PrevCoord);
             if (piece != null) {
                 PotentialCoords.clear();
-                PotentialCoords.addAll(java.util.List.of(piece.generateMoves(board)));
+                if (piece.color == correctColor)
+                    PotentialCoords.addAll(java.util.List.of(piece.generateMovesValid(board)));
             }
-            System.out.println("Now it's " + PrevCoord);
         }
-        else if (!board.movePiece(PrevCoord, new Coord(x, y))){
-            PrevCoord = new Coord(x, y);
-            var piece = board.findPiece(PrevCoord);
-            if (piece != null) {
+        else {
+            var currentPiece = board.findPiece(PrevCoord);
+            if (currentPiece == null || currentPiece.color != correctColor){
+                PrevCoord = new Coord(x, y);
+                var piece = board.findPiece(PrevCoord);
                 PotentialCoords.clear();
-                PotentialCoords.addAll(java.util.List.of(piece.generateMoves(board)));
+                if (piece != null && piece.color == correctColor) {
+                    PotentialCoords.addAll(java.util.List.of(piece.generateMovesValid(board)));
+                }
             }
-            System.out.println("Can't move");
-        } else {
-            System.out.println(board.printBoard());
-            PrevCoord = null;
-            PotentialCoords.clear();
-        }
-        if (board.isChecked(WHITE) || board.isChecked(BLACK)){
-            System.out.println("We're being checked.");
+            else if (!board.movePiece(PrevCoord, new Coord(x, y))) {
+                PrevCoord = new Coord(x, y);
+                var piece = board.findPiece(PrevCoord);
+                PotentialCoords.clear();
+                if (piece != null && piece.color == correctColor) {
+                    PotentialCoords.addAll(java.util.List.of(piece.generateMovesValid(board)));
+                }
+                System.out.println("Can't move");
+            } else {
+                isWhitesTurn = !isWhitesTurn;
+                System.out.println(board.printBoard());
+                PrevCoord = null;
+                PotentialCoords.clear();
+            }
         }
         redraw();
     }

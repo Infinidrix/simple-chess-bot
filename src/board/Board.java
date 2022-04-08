@@ -27,8 +27,9 @@ public class Board {
     public static final boolean BLACK = false;
     static final Coord EATEN = new Coord(-100, -100);
 
-    ChessPiece[] WhitePieces, BlackPieces;
+    public ChessPiece[] WhitePieces, BlackPieces;
     GameHistory gameHistory;
+    // TODO: Add turn logic
 
     public Board() {
         WhitePieces = new ChessPiece[16];
@@ -155,7 +156,7 @@ public class Board {
             if (piece != null){
                 piece.coord = EATEN;
             }
-            gameHistory.add(targetPiece, newLoc);
+            gameHistory.add(targetPiece, newLoc, piece);
             targetPiece.coord = newLoc;
             if (isChecked(targetPiece.color)){
                 gameHistory.undo();
@@ -166,10 +167,15 @@ public class Board {
         return false;
     }
 
+    public void undo(){
+        System.out.println("Undoing " + gameHistory.history.peek());
+        gameHistory.undo();
+    }
+
     private boolean validateMove(ChessPiece targetPiece, Coord newLoc) {
-        System.out.println(targetPiece.getClass());
-        System.out.println("Got to the validating point for " + targetPiece.coord);
-        System.out.println(Arrays.toString(targetPiece.generateMoves(this)));
+//        System.out.println(targetPiece.getClass());
+//        System.out.println("Got to the validating point for " + targetPiece.coord);
+//        System.out.println(Arrays.toString(targetPiece.generateMoves(this)));
         return Arrays.asList(targetPiece.generateMoves(this)).contains(newLoc);
     }
 
