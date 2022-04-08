@@ -5,17 +5,18 @@ import java.util.ArrayList;
 import static board.Board.*;
 
 public class Rook extends ChessPiece{
-    Rook(Coord coord, boolean color){
+    Rook(Coord coord, boolean color, int type){
         this.coord = coord;
         this.color = color;
+        this.type = type;
     }
 
-    Rook(int x, int y, boolean color){
-        this(new Coord(x, y), color);
+    Rook(int x, int y, boolean color, int type){
+        this(new Coord(x, y), color, type);
     }
 
     @Override
-    Coord[] generateMoves(Board board) {
+    public Coord[] generateMoves(Board board) {
         ArrayList<Coord> moves = new ArrayList<>();
         for (int move1 : new int[]{1, -1}){
             for (boolean flip : new boolean[]{true, false}){

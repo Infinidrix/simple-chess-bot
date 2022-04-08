@@ -5,17 +5,18 @@ import java.util.ArrayList;
 import static board.Board.*;
 
 public class Pawn extends ChessPiece{
-    Pawn(Coord coord, boolean color){
+    Pawn(Coord coord, boolean color, int type){
         this.coord = coord;
         this.color = color;
+        this.type = type;
     }
 
-    Pawn(int x, int y, boolean color){
-        this(new Coord(x, y), color);
+    Pawn(int x, int y, boolean color, int type){
+        this(new Coord(x, y), color, type);
     }
-
     @Override
-    Coord[] generateMoves(Board board) {
+    public Coord[] generateMoves(Board board) {
+        // TODO: Generate en passant
         int dir = 1;
         if (!color) {
             dir = -1;

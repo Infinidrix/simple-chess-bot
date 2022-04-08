@@ -4,8 +4,9 @@ import static board.Board.BLACK;
 import static board.Board.KING;
 
 abstract public class ChessPiece {
-    Coord coord;
-    boolean color;
+    public Coord coord;
+    public boolean color;
+    public int type;
 
     @Override
     public String toString() {
@@ -15,16 +16,16 @@ abstract public class ChessPiece {
                 '}';
     }
 
-    abstract Coord[] generateMoves(Board board);
+    public abstract Coord[] generateMoves(Board board);
 
-    boolean canCheck(Board board) {
+    public boolean canCheck(Board board) {
         Coord targetCoord = board.BlackPieces[KING].coord;
         if (color == BLACK)
             targetCoord = board.WhitePieces[KING].coord;
-            for (Coord move: generateMoves(board)) {
-                if (move == targetCoord)
-                    return true;
-            }
-            return false;
+        for (Coord move : generateMoves(board)) {
+            if (move.equals(targetCoord))
+                return true;
+        }
+        return false;
     }
 }

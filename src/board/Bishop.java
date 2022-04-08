@@ -5,17 +5,18 @@ import java.util.ArrayList;
 import static board.Board.*;
 
 public class Bishop extends ChessPiece{
-    Bishop(Coord coord, boolean color){
+    Bishop(Coord coord, boolean color, int type){
         this.coord = coord;
         this.color = color;
+        this.type = type;
     }
 
-    Bishop(int x, int y, boolean color){
-        this(new Coord(x, y), color);
+    Bishop(int x, int y, boolean color, int type){
+        this(new Coord(x, y), color, type);
     }
 
     @Override
-    Coord[] generateMoves(Board board) {
+    public Coord[] generateMoves(Board board) {
         ArrayList<Coord> moves = new ArrayList<>();
         for (int move1 : new int[]{1, -1}){
             for (int move2 : new int[]{1, -1}){
