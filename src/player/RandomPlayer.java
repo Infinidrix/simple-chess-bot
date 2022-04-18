@@ -17,16 +17,7 @@ public class RandomPlayer extends Player{
 
     @Override
     public void makeMove(Board board) {
-        var pieces = board.BlackPieces;
-        if (color == WHITE){
-            pieces = board.WhitePieces;
-        }
-        ArrayList<MoveHistory> possibleMoves = new ArrayList<>();
-        for (var piece : pieces) {
-            for (var move : piece.generateMovesValid(board)){
-                possibleMoves.add(new MoveHistory(piece.coord, move, piece, board.findPiece(move)));
-            }
-        }
+        var possibleMoves = board.getPossibleMoves(color);
 
         var nextMoveInd = (new Random()).nextInt(possibleMoves.size());
 
@@ -35,6 +26,6 @@ public class RandomPlayer extends Player{
     }
 
     public static void main(String[] args) {
-        new MainUI(new RandomPlayer(BLACK), new Board());
+        new MainUI(new RandomPlayer(WHITE), new RandomPlayer(BLACK), new Board());
     }
 }

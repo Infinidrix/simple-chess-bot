@@ -1,10 +1,10 @@
 package board;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static board.Board.BLACK;
-import static board.Board.KING;
+import static board.Board.*;
 
 abstract public class ChessPiece {
     public Coord coord;
@@ -22,11 +22,19 @@ abstract public class ChessPiece {
     public abstract Coord[] generateMoves(Board board);
 
     public Coord[] generateMovesValid(Board board){
-        System.out.println(Arrays.toString(generateMoves(board)));
+//        if (type == QUEEN){
+//            System.out.println("After Validation: " +
+//                    Arrays.toString(Arrays.stream(generateMoves(board)).filter(e -> {
+//                        if (board.movePiece(this, e)) {
+//                            board.undo();
+//                            return true;
+//                        }
+//                        return false;
+//                    }).toArray(Coord[]::new))
+//            );
+//        }
         return Arrays.stream(generateMoves(board)).filter(e -> {
-            System.out.println(board.printBoard());
             if (board.movePiece(this, e)) {
-                System.out.println("Got to undoing " + e);
                 board.undo();
                 return true;
             }
@@ -43,5 +51,18 @@ abstract public class ChessPiece {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return color == that.color && type == that.type && coord.equals(that.coord);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(coord, color, type);
     }
 }

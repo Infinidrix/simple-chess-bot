@@ -14,6 +14,10 @@ import static board.Board.BLACK;
 import static board.Board.WHITE;
 
 public class MainUI extends JFrame{
+    // TODO: Make board checkered
+    // TODO: Make pieces icons
+    // TODO: Make move visible before bot thinks
+    // TODO: Show Previous Move
     JButton[] ChessBoard;
     Coord PrevCoord;
     Set<Coord> PotentialCoords;
@@ -21,23 +25,42 @@ public class MainUI extends JFrame{
     Player whitePlayer, blackPlayer;
     boolean isWhitesTurn, keepPlaying;
 
-    MainUI(Player whitePlayer, Player blackPlayer, Board board){
+    public MainUI(Player whitePlayer, Player blackPlayer, Board board){
         super("Chess Bot");
-        PotentialCoords = new HashSet<>();
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         this.board = board;
+        PotentialCoords = new HashSet<>();
         isWhitesTurn = true;
         keepPlaying = true;
         draw();
+        if (whitePlayer != null && blackPlayer != null){
+            int timeout = 10;
+            int maxMoves = 1000;
+            for (int i = 0; i < maxMoves; i++){
+                while (!keepPlaying) {
+                    try {
+                        Thread.sleep(timeout);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                prepareNextMove();
+                try {
+                    Thread.sleep(timeout);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public MainUI(Board board) {
-        this((Player) null, (Player) null, board);
+        this(null, null, board);
     }
 
     public MainUI(Player player, Board board){
-        this((Player) null, player, board);
+        this(null, player, board);
     }
 
     public void draw(){
@@ -64,7 +87,25 @@ public class MainUI extends JFrame{
         setSize(440,460);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        prepareNextMove();
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                System.out.println("Listening to " + e.getKeyChar());
+                if (e.getKeyChar() == 'p'){
+                    keepPlaying = !keepPlaying;
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println("Closely Listening to " + e.getKeyChar());
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
     }
 
     public void redraw(){
@@ -95,7 +136,6 @@ public class MainUI extends JFrame{
     }
 
     private void movePieceUI(Board board, int x, int y) {
-        System.out.println(PrevCoord);
         var correctColor = (isWhitesTurn) ? WHITE : BLACK;
         if (PrevCoord == null) {
             PrevCoord = new Coord(x, y);
@@ -123,15 +163,18 @@ public class MainUI extends JFrame{
                 if (piece != null && piece.color == correctColor) {
                     PotentialCoords.addAll(java.util.List.of(piece.generateMovesValid(board)));
                 }
-                System.out.println("Can't move");
             } else {
                 isWhitesTurn = !isWhitesTurn;
-                System.out.println(board.printBoard());
                 PrevCoord = null;
                 PotentialCoords.clear();
             }
         }
         redraw();
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         prepareNextMove();
     }
 

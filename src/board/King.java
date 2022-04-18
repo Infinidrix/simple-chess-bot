@@ -22,7 +22,6 @@ public class King extends ChessPiece{
         for (int move1 : new int[]{1, -1}){
             for (int move2 : new int[]{1, -1}){
                 Coord fullMove1 = new Coord(coord.x + move1, coord.y + move2);
-                System.out.println("Trying " + fullMove1);
                 if (fullMove1.x >= 0 && fullMove1.x < BOARD_SIZE &&
                         fullMove1.y >= 0 && fullMove1.y < BOARD_SIZE){
                     var piece = board.findPiece(fullMove1);
@@ -42,7 +41,6 @@ public class King extends ChessPiece{
         for (int move1 : new int[]{1, -1}){
             for (boolean flip : new boolean[]{true, false}){
                 Coord fullMove1 = new Coord(coord.x + move1, coord.y);
-                System.out.println("Trying " + fullMove1);
                 if (flip)
                     fullMove1 = new Coord(coord.x, coord.y + move1);
                 if (fullMove1.x >= 0 && fullMove1.x < BOARD_SIZE &&
@@ -65,10 +63,5 @@ public class King extends ChessPiece{
         }
 
         return moves.toArray(new Coord[]{});
-    }
-
-    @Override
-    public boolean canCheck(Board board) {
-        return false;
     }
 }

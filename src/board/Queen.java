@@ -35,7 +35,6 @@ public class Queen extends ChessPiece{
                 }
             }
         }
-        System.out.println(moves);
         for (int move1 : new int[]{1, -1}){
             for (boolean flip : new boolean[]{true, false}){
                 Coord fullMove1 = new Coord(coord.x + move1, coord.y);
@@ -60,7 +59,6 @@ public class Queen extends ChessPiece{
                 }
             }
         }
-        System.out.println(moves);
         return moves.toArray(new Coord[]{});
     }
 }
