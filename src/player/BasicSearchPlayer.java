@@ -60,8 +60,7 @@ public class BasicSearchPlayer extends Player{
     }
 
     public static void main(String[] args) {
-//        new MainUI(new BasicSearchPlayer(WHITE, 1, 0), new BasicSearchPlayer(BLACK, 4, 100), new Board());
-        new MainUI(new BasicSearchPlayer(BLACK, 5, 100), new Board());
+        new MainUI(new BasicSearchPlayer(BLACK, 2, 0), new Board());
     }
 
 }

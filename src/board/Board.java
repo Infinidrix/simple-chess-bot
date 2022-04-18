@@ -28,6 +28,13 @@ public class Board implements Cloneable {
     static final Coord EATEN = new Coord(-100, -100);
 
     public ChessPiece[] WhitePieces, BlackPieces;
+
+    public MoveHistory getLastMove() {
+        if (gameHistory.history.empty())
+            return null;
+        return gameHistory.history.peek();
+    }
+
     GameHistory gameHistory;
     public int turn;
 
