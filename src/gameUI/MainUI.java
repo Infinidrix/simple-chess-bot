@@ -243,6 +243,7 @@ public class MainUI extends JFrame{
         redraw();
         repaint();
         prepareNextMove();
+        System.out.println(board.getBoardRepresentation());
     }
 
     private void prepareNextMove() {

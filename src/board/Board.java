@@ -1,7 +1,12 @@
 package board;
 
+import javax.swing.text.AttributeSet;
 import java.io.Console;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Map.copyOf;
 
 public class Board implements Cloneable {
 
@@ -58,35 +63,128 @@ public class Board implements Cloneable {
 
     Status currentStatus;
 
-
     public Board() {
+        this("rhbqkbhrpppppppp32PPPPPPPPRHBQKBHR");
+    }
+    public Board(String startingBoard) {
+
         WhitePieces = new ChessPiece[16];
         BlackPieces = new ChessPiece[16];
         gameHistory = new GameHistory();
         turn = 0;
         currentStatus = Status.ONGOING;
+        Map<Character, Queue<Integer>> whiteCharToConst = Map.of(
+                'R', new LinkedList<>(List.of(ROOK_LEFT, ROOK_RIGHT)),
+                'H', new LinkedList<>(List.of(KNIGHT_LEFT, KNIGHT_RIGHT)),
+                'B', new LinkedList<>(List.of(BISHOP_LEFT, BISHOP_RIGHT)),
+                'Q', new LinkedList<>(List.of(QUEEN)),
+                'K', new LinkedList<>(List.of(KING)),
+                'P', new LinkedList<>(List.of(PAWN_1, PAWN_2, PAWN_3, PAWN_4, PAWN_5, PAWN_6, PAWN_7, PAWN_8))
+        );
+        Map<Character, Queue<Integer>> blackCharToConst = whiteCharToConst.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> new LinkedList<Integer>(e.getValue())));
+        int space = 0;
+        int currentLoc = 0;
 
-        WhitePieces[0] = new Rook(0, 0, WHITE, ROOK_LEFT);
-        WhitePieces[1] = new Knight(0, 1, WHITE, KNIGHT_LEFT);
-        WhitePieces[2] = new Bishop(0, 2, WHITE, BISHOP_LEFT);
-        WhitePieces[3] = new Queen(0, 3, WHITE, QUEEN);
-        WhitePieces[4] = new King(0, 4, WHITE, KING);
-        WhitePieces[5] = new Bishop(0, 5, WHITE, BISHOP_RIGHT);
-        WhitePieces[6] = new Knight(0, 6, WHITE, KNIGHT_RIGHT);
-        WhitePieces[7] = new Rook(0, 7, WHITE, ROOK_RIGHT);
+        for (int i = 0; i < startingBoard.length(); i++){
+            char c = startingBoard.charAt(i);
+            if (Character.isDigit(c)){
+                space = space * 10 + Character.getNumericValue(c);
+            } else {
+                if (space != 0) {
+                    currentLoc += space;
+                    space = 0;
+                }
+                var currPiece = WhitePieces;
+                var currMap = whiteCharToConst;
+                var isWhite = true;
+                if (Character.toLowerCase(c) == c){
+                    currPiece = BlackPieces;
+                    currMap = blackCharToConst;
+                    isWhite = false;
+                }
+                c = Character.toUpperCase(c);
+                var index = currMap.get(c).poll();
+                int x = 7 - (currentLoc / 8), y = currentLoc % 8;
+                switch (c){
+                    case 'K':
+                        currPiece[index] = new King(x, y, isWhite ? WHITE : BLACK, index);
+                        break;
+                    case 'Q':
+                        currPiece[index] = new Queen(x, y, isWhite ? WHITE : BLACK, index);
+                        break;
+                    case 'B':
+                        currPiece[index] = new Bishop(x, y, isWhite ? WHITE : BLACK, index);
+                        break;
+                    case 'H':
+                        currPiece[index] = new Knight(x, y, isWhite ? WHITE : BLACK, index);
+                        break;
+                    case 'R':
+                        currPiece[index] = new Rook(x, y, isWhite ? WHITE : BLACK, index);
+                        break;
+                    case 'P':
+                        currPiece[index] = new Pawn(x, y, isWhite ? WHITE : BLACK, index);
+                        break;
+                }
+                currentLoc += 1;
+            }
+        }
+        for (var p : whiteCharToConst.entrySet()){
+            while (!p.getValue().isEmpty()){
+                var index = p.getValue().poll();
+                var c = p.getKey();
+                var currPiece = WhitePieces;
+                int x = -1, y = -1;
+                switch (c){
+                    case 'K':
+                        currPiece[index] = new King(x, y, WHITE, index);
+                        break;
+                    case 'Q':
+                        currPiece[index] = new Queen(x, y, WHITE, index);
+                        break;
+                    case 'B':
+                        currPiece[index] = new Bishop(x, y, WHITE, index);
+                        break;
+                    case 'H':
+                        currPiece[index] = new Knight(x, y, WHITE, index);
+                        break;
+                    case 'R':
+                        currPiece[index] = new Rook(x, y, WHITE, index);
+                        break;
+                    case 'P':
+                        currPiece[index] = new Pawn(x, y, WHITE, index);
+                        break;
+                }
+            }
+        }
 
-        BlackPieces[0] = new Rook(7, 0, BLACK, ROOK_LEFT);
-        BlackPieces[1] = new Knight(7, 1, BLACK, KNIGHT_LEFT);
-        BlackPieces[2] = new Bishop(7, 2, BLACK, BISHOP_LEFT);
-        BlackPieces[3] = new Queen(7, 3, BLACK, QUEEN);
-        BlackPieces[4] = new King(7, 4, BLACK, KING);
-        BlackPieces[5] = new Bishop(7, 5, BLACK, BISHOP_RIGHT);
-        BlackPieces[6] = new Knight(7, 6, BLACK, KNIGHT_RIGHT);
-        BlackPieces[7] = new Rook(7, 7, BLACK, ROOK_RIGHT);
-
-        for (int i = 8; i < 16; i++){
-            WhitePieces[i] = new Pawn(i / 8, i % 8, WHITE, PAWN_1 + i - 8);
-            BlackPieces[i] = new Pawn(7 - (i / 8), i % 8, BLACK, PAWN_1 + i - 8);
+        for (var p : blackCharToConst.entrySet()){
+            while (!p.getValue().isEmpty()){
+                var index = p.getValue().poll();
+                var c = p.getKey();
+                var currPiece = BlackPieces;
+                int x = -1, y = -1;
+                switch (c) {
+                    case 'K':
+                        currPiece[index] = new King(x, y, BLACK, index);
+                        break;
+                    case 'Q':
+                        currPiece[index] = new Queen(x, y, BLACK, index);
+                        break;
+                    case 'B':
+                        currPiece[index] = new Bishop(x, y, BLACK, index);
+                        break;
+                    case 'H':
+                        currPiece[index] = new Knight(x, y, BLACK, index);
+                        break;
+                    case 'R':
+                        currPiece[index] = new Rook(x, y, BLACK, index);
+                        break;
+                    case 'P':
+                        currPiece[index] = new Pawn(x, y, BLACK, index);
+                        break;
+                }
+            }
         }
     }
 
@@ -110,6 +208,30 @@ public class Board implements Cloneable {
                 "WhitePieces=" + Arrays.toString(WhitePieces) +
                 ", BlackPieces=" + Arrays.toString(BlackPieces) +
                 '}';
+    }
+
+    public String getBoardRepresentation(){
+        int space = 0;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = BOARD_SIZE - 1; i >= 0; i--){
+            for (int j = 0; j < BOARD_SIZE; j++){
+                var piece = this.findPiece(new Coord(i, j));
+                if (piece == null){
+                    space += 1;
+                    continue;
+                }
+                if (space > 0) {
+                    stringBuilder.append(space);
+                    space = 0;
+                }
+                var rep = representations.charAt(piece.type);
+                if (piece.color != WHITE){
+                    rep = Character.toLowerCase(rep);
+                }
+                stringBuilder.append(rep);
+            }
+        }
+        return stringBuilder.toString();
     }
 
     public String printBoard() {
@@ -194,18 +316,21 @@ public class Board implements Cloneable {
     }
 
     public void updateGameStatus(){
-        if (getPossibleMoves(WHITE).size() == 0){
+
+        if (turn % 2 == 0 && getPossibleMoves(WHITE).size() == 0){
             if (isChecked(WHITE)){
                 currentStatus = Status.BLACK_WIN;
             } else {
                 currentStatus = Status.DRAW;
             }
-        } else if (getPossibleMoves(BLACK).size() == 0){
+        } else if (turn % 2 == 1 && getPossibleMoves(BLACK).size() == 0){
             if (isChecked(BLACK)){
                 currentStatus = Status.WHITE_WIN;
             } else {
                 currentStatus = Status.DRAW;
             }
+        } else {
+            currentStatus = Status.ONGOING;
         }
     }
 

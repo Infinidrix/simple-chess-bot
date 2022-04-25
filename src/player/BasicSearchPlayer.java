@@ -40,23 +40,24 @@ public class BasicSearchPlayer extends Player{
             else
                 return new SimpleEntry<>(null, CurrentBoardStrength.pieceStrengths(board, color) + (100 * CurrentBoardStrength.winFactor(board, color)));
         }
+        var moves = board.getPossibleMoves(color);
+        if (moves.isEmpty()){
+            return searchMove(board, color, 0, 0, 0);
+        }
         SimpleEntry<MoveHistory, Integer> bestMove = null;
         var random = new Random();
-        for (var move : board.getPossibleMoves(color)){
+        for (var move : moves){
             board.movePiece(move.getPiece(), move.getNewLoc());
             var currMove = searchMove(board, !color, currDepth - 1, -beta, -alpha);
             board.undo();
             if (currMove == null) {
                 continue;
             }
-            if (Math.abs(currMove.getValue()) > 10000){
-                System.out.println(currMove.getValue());
-            }
             currMove.setValue(-currMove.getValue());
             if (currMove.getValue() >= beta){
                 return new SimpleEntry<>(move, currMove.getValue());
             }
-            if (bestMove == null || bestMove.getValue() < currMove.getValue() || (bestMove.getValue().equals(currMove.getValue()) && random.nextInt(10) > 7)){
+            if (bestMove == null || bestMove.getValue() < currMove.getValue()){// || (bestMove.getValue().equals(currMove.getValue()) && random.nextInt(10) > 7)){
                 bestMove = new SimpleEntry<>(move, currMove.getValue());
             }
             alpha = Math.max(alpha, currMove.getValue());
@@ -65,7 +66,10 @@ public class BasicSearchPlayer extends Player{
     }
 
     public static void main(String[] args) {
-        new MainUI(new BasicSearchPlayer(BLACK, 3, 0), new Board());
+        new MainUI(
+                new BasicSearchPlayer(BLACK, 3, 0),
+                new Board("rhbqkbhrpppppp8p8p4P8Q2PPPP1PPPRHB1KBHR")
+        );
     }
 
 }

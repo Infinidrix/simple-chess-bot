@@ -22,17 +22,6 @@ abstract public class ChessPiece {
     public abstract Coord[] generateMoves(Board board);
 
     public Coord[] generateMovesValid(Board board){
-//        if (type == QUEEN){
-//            System.out.println("After Validation: " +
-//                    Arrays.toString(Arrays.stream(generateMoves(board)).filter(e -> {
-//                        if (board.movePiece(this, e)) {
-//                            board.undo();
-//                            return true;
-//                        }
-//                        return false;
-//                    }).toArray(Coord[]::new))
-//            );
-//        }
         return Arrays.stream(generateMoves(board)).filter(e -> {
             if (board.movePiece(this, e)) {
                 board.undo();
