@@ -24,11 +24,12 @@ public class BasicSearchPlayer extends Player{
     @Override
     public void makeMove(Board board) {
         SimpleEntry<MoveHistory, Integer> bestMove;
-        if (board.turn > turnaround) {
+        if (board.turn > 100) {
             bestMove = searchMove(board, color, maxDepth + 2, Integer.MIN_VALUE + 10, Integer.MAX_VALUE - 10);
         } else {
             bestMove = searchMove(board, color, maxDepth, Integer.MIN_VALUE + 10, Integer.MAX_VALUE - 10);
         }
+        System.out.println("Final "+bestMove.getValue());
         board.movePiece(bestMove.getKey().getPiece(), bestMove.getKey().getNewLoc());
     }
 
@@ -45,8 +46,12 @@ public class BasicSearchPlayer extends Player{
             board.movePiece(move.getPiece(), move.getNewLoc());
             var currMove = searchMove(board, !color, currDepth - 1, -beta, -alpha);
             board.undo();
-            if (currMove == null)
+            if (currMove == null) {
                 continue;
+            }
+            if (Math.abs(currMove.getValue()) > 10000){
+                System.out.println(currMove.getValue());
+            }
             currMove.setValue(-currMove.getValue());
             if (currMove.getValue() >= beta){
                 return new SimpleEntry<>(move, currMove.getValue());
@@ -60,7 +65,7 @@ public class BasicSearchPlayer extends Player{
     }
 
     public static void main(String[] args) {
-        new MainUI(new BasicSearchPlayer(BLACK, 2, 0), new Board());
+        new MainUI(new BasicSearchPlayer(BLACK, 3, 0), new Board());
     }
 
 }

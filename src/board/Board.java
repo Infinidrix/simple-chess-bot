@@ -4,6 +4,13 @@ import java.io.Console;
 import java.util.*;
 
 public class Board implements Cloneable {
+
+    // TODO: Add state representation
+    // TODO: Add board generation from state representation
+    // TODO: Add promotion
+    // TODO: Add print state method
+    // TODO: Fix update game status method
+
     public static final int ROOK_LEFT = 0;
     public static final int KNIGHT_LEFT = 1;
     public static final int BISHOP_LEFT = 2;

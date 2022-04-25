@@ -16,7 +16,7 @@ import static java.util.Map.entry;
 
 public class MainUI extends JFrame{
     // TODO: Make move visible before bot thinks
-    // TODO: Add controls
+    // TODO: Add (key-binding) controls
     JButton[] ChessBoard;
     Coord PrevCoord;
     Set<Coord> PotentialCoords;

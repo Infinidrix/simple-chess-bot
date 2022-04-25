@@ -51,10 +51,10 @@ public class CurrentBoardStrength {
         var status = board.getCurrentStatus();
 
         if (status == Status.BLACK_WIN){
-            return (color == BLACK) ? 1 : -1;
+            return (color == BLACK) ? 10000 : -10000;
         } else if (status == Status.WHITE_WIN){
-            return (color == WHITE) ? 1 : -1;
+            return (color == WHITE) ? 10000 : -10000;
         }
-        return 0;
+        return 1;
     }
 }
